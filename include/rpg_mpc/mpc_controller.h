@@ -92,9 +92,6 @@ public:
 private:
   // Internal helper functions.
 
-  void pointOfInterestCallback(
-      const geometry_msgs::PointStamped::ConstPtr& msg);
-
   void offCallback(const std_msgs::Empty::ConstPtr& msg);
 
   bool setStateEstimate(
@@ -121,7 +118,6 @@ private:
   ros::NodeHandle pnh_;
 
   // Subscribers and publisher.
-  ros::Subscriber sub_point_of_interest_;
   ros::Subscriber sub_autopilot_off_;
   ros::Publisher pub_predicted_trajectory_;
 

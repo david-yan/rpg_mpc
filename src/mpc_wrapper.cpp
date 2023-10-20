@@ -110,14 +110,18 @@ bool MpcWrapper<T>::setCosts(
     ROS_ERROR("MPC: Cost scaling is wrong, must be non-negative!");
     return false;
   }
+  // W_ is diag(Q, R)
   W_.block(0, 0, kCostSize, kCostSize) = Q;
   W_.block(kCostSize, kCostSize, kInputSize, kInputSize) = R;
+  // WN_ seems to just be a copy of W_. Not sure what for...
   WN_ = W_.block(0, 0, kCostSize, kCostSize);
 
   float state_scale{1.0};
   float input_scale{1.0};
   for(int i=0; i<kSamples; i++)
-  { 
+  {
+    // costs are time-varied using state_scale and input_scale
+    // lower i (closer to present) has a higher weighting
     state_scale = exp(- float(i)/float(kSamples)
       * float(state_cost_scaling));
     input_scale = exp(- float(i)/float(kSamples)
@@ -201,8 +205,8 @@ template <typename T>
 bool MpcWrapper<T>::setPointOfInterest(
   const Eigen::Ref<const Eigen::Matrix<T, 3, 1>>& position)
 {
-  acado_online_data_.block(0, 0, 3, ACADO_N+1)
-    = position.replicate(1, ACADO_N+1).template cast<float>();
+  // acado_online_data_.block(0, 0, 3, ACADO_N+1)
+  //   = position.replicate(1, ACADO_N+1).template cast<float>();
   return true;
 }
 
@@ -211,12 +215,15 @@ template <typename T>
 bool MpcWrapper<T>::setReferencePose(
   const Eigen::Ref<const Eigen::Matrix<T, kStateSize, 1>> state)
 {
+  // set x_bar reference states
   acado_reference_states_.block(0, 0, kStateSize, kSamples) =
     state.replicate(1, kSamples).template cast<float>();
 
+  // set z_bar reference states (null vector)
   acado_reference_states_.block(kStateSize, 0, kCostSize-kStateSize, kSamples) =
     Eigen::Matrix<float, kCostSize-kStateSize, kSamples>::Zero();
 
+  // set u_bar reference states (hover action)
   acado_reference_states_.block(kCostSize, 0, kInputSize, kSamples) =
     kHoverInput_.replicate(1, kSamples);
 
