@@ -22,7 +22,7 @@
 
 
 <launch>
-  <arg name="quad_name" />
+  <arg name="quad_name" default="quadrotor"/>
   <group ns="$(arg quad_name)" >
 
     <node pkg="rpg_mpc" type="mpc_controller_node" name="mpc_controller_node" output="screen" >

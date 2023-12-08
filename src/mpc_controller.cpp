@@ -70,6 +70,8 @@ template<typename T>
 quadrotor_common::ControlCommand MpcController<T>::off() {
   quadrotor_common::ControlCommand command;
 
+  solve_from_scratch_ = true;
+
   command.zero();
 
   return command;
