@@ -21,7 +21,7 @@
 
 
 # Cost on states
-Q_pos_xy:     500   # Cost for horizontal positon error
+Q_pos_xy:     1000   # Cost for horizontal positon error
 Q_pos_z:      500   # Cost for vertical position error
 Q_attitude:   50    # Cost for attitude error
 Q_velocity:   50    # Cost for velocity error
